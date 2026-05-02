@@ -8,14 +8,22 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Install nuclei
+      - name: Cache Go tools
+        uses: actions/cache@v4
+        id: cache-tools
+        with:
+          path: ~/go/bin
+          key: go-tools-${{ runner.os }}-v1
+
+      - name: Install nuclei if not cached
+        if: steps.cache-tools.outputs.cache-hit != 'true'
         run: go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
 
-      - name: Update and cache nuclei templates
+      - name: Update nuclei templates
         uses: actions/cache@v4
         with:
           path: ~/.local/share/nuclei-templates
-          key: nuclei-templates-${{ runner.os }}-${{ github.run_id }}
+          key: nuclei-templates-${{ runner.os }}-weekly
           restore-keys: |
             nuclei-templates-${{ runner.os }}-
 
