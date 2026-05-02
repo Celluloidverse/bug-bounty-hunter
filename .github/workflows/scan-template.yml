@@ -47,18 +47,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Split domains into batches of 100
+      - name: Split domains into batches of 50
         id: split
         run: |
           total=$(wc -l < domains.txt)
-          num_batches=$(( (total + 99) / 100 ))
+          num_batches=$(( (total + 49) / 50 ))
           batches=$(seq 1 $num_batches | jq -R . | jq -sc .)
           echo "batches=$batches" >> $GITHUB_OUTPUT
 
   scan:
     needs: prepare
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 85
     strategy:
       fail-fast: false
       max-parallel: 10
@@ -68,19 +68,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache Go tools
+        uses: actions/cache@v4
+        id: cache-tools
+        with:
+          path: ~/go/bin
+          key: go-tools-${{ runner.os }}-v1
+
       - name: Install tools
+        if: steps.cache-tools.outputs.cache-hit != 'true'
         run: |
           go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
           go install github.com/projectdiscovery/httpx/cmd/httpx@latest
           go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
-          if [ "${{ inputs.use_katana }}" = "true" ]; then
-            go install github.com/projectdiscovery/katana/cmd/katana@latest
-          fi
+          go install github.com/projectdiscovery/katana/cmd/katana@latest
+
+      - name: Restore nuclei templates
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/nuclei-templates
+          key: nuclei-templates-${{ runner.os }}-latest
+          restore-keys: |
+            nuclei-templates-${{ runner.os }}-
 
       - name: Split domains
         run: |
-          start=$(( (${{ matrix.batch }} - 1) * 100 + 1 ))
-          sed -n "${start},$((start + 99))p" domains.txt > batch_domains.txt
+          start=$(( (${{ matrix.batch }} - 1) * 50 + 1 ))
+          sed -n "${start},$((start + 49))p" domains.txt > batch_domains.txt
 
       - name: Run subfinder
         run: |
@@ -99,11 +113,6 @@ jobs:
           export PATH=$PATH:$(go env GOPATH)/bin
           katana -list live_hosts.txt -silent -js-crawl -depth 2 -timeout 10 -o urls.txt || true
 
-      - name: Update nuclei templates
-        run: |
-          export PATH=$PATH:$(go env GOPATH)/bin
-          nuclei -update-templates -silent
-
       - name: Run nuclei
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
@@ -119,7 +128,7 @@ jobs:
             CUSTOM_FLAG="-t custom-templates"
           fi
 
-          nuclei -l "$INPUT_FILE" \
+          timeout 4500 nuclei -l "$INPUT_FILE" \
             $TAGS_FLAG \
             $CUSTOM_FLAG \
             -severity ${{ inputs.severity }} \
