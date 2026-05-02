@@ -47,11 +47,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Split domains into batches of 50
+      - name: Split subdomains into batches of 200
         id: split
         run: |
-          total=$(wc -l < domains.txt)
-          num_batches=$(( (total + 49) / 50 ))
+          # Use subdomains.txt if exists, otherwise fall back to domains.txt
+          if [ -f subdomains.txt ] && [ -s subdomains.txt ]; then
+            INPUT=subdomains.txt
+          else
+            INPUT=domains.txt
+          fi
+          total=$(wc -l < $INPUT)
+          cp $INPUT input.txt
+          num_batches=$(( (total + 199) / 200 ))
           batches=$(seq 1 $num_batches | jq -R . | jq -sc .)
           echo "batches=$batches" >> $GITHUB_OUTPUT
 
@@ -78,7 +85,6 @@ jobs:
       - name: Install tools
         if: steps.cache-tools.outputs.cache-hit != 'true'
         run: |
-          go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
           go install github.com/projectdiscovery/httpx/cmd/httpx@latest
           go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
           go install github.com/projectdiscovery/katana/cmd/katana@latest
@@ -91,27 +97,29 @@ jobs:
           restore-keys: |
             nuclei-templates-${{ runner.os }}-
 
-      - name: Split domains
+      - name: Split batch
         run: |
-          start=$(( (${{ matrix.batch }} - 1) * 50 + 1 ))
-          sed -n "${start},$((start + 49))p" domains.txt > batch_domains.txt
-
-      - name: Run subfinder
-        run: |
-          export PATH=$PATH:$(go env GOPATH)/bin
-          subfinder -dL batch_domains.txt -silent -timeout 10 -t 10 -max-time 10 -o subs_raw.txt || true
-          grep -vP '^\d+[-\.]\d+[-\.]\d+[-\.]\d+\.' subs_raw.txt > subs.txt || true
+          start=$(( (${{ matrix.batch }} - 1) * 200 + 1 ))
+          sed -n "${start},$((start + 199))p" input.txt > batch_hosts.txt
 
       - name: Run httpx
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
-          httpx -l subs.txt ${{ inputs.httpx_flags }} -timeout 5 -retries 0 -rl 100 -o live_hosts.txt || true
+          httpx -l batch_hosts.txt ${{ inputs.httpx_flags }} -timeout 5 -retries 0 -rl 150 -o live_hosts.txt || true
 
       - name: Run katana (if enabled)
         if: inputs.use_katana == true
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
           katana -list live_hosts.txt -silent -js-crawl -depth 2 -timeout 10 -o urls.txt || true
+
+      - name: Restore nuclei templates
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/nuclei-templates
+          key: nuclei-templates-${{ runner.os }}-weekly
+          restore-keys: |
+            nuclei-templates-${{ runner.os }}-
 
       - name: Run nuclei
         run: |
