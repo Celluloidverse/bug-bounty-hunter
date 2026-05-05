@@ -19,15 +19,14 @@ jobs:
         if: steps.cache-tools.outputs.cache-hit != 'true'
         run: go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
 
-      - name: Update nuclei templates
+      - name: Run update and save templates
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          nuclei -update-templates -silent || true
+          echo "Templates downloaded: $(ls $HOME/.local/share/nuclei-templates | wc -l) folders"
+
+      - name: Cache nuclei templates
         uses: actions/cache@v4
         with:
           path: ~/.local/share/nuclei-templates
           key: nuclei-templates-${{ runner.os }}-weekly
-          restore-keys: |
-            nuclei-templates-${{ runner.os }}-
-
-      - name: Run update
-        run: |
-          export PATH=$PATH:$(go env GOPATH)/bin
-          nuclei -update-templates -silent
