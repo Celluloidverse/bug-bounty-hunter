@@ -68,6 +68,18 @@ jobs:
           restore-keys: |
             nuclei-templates-${{ runner.os }}-
 
+      - name: Ensure nuclei templates exist
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          if [ ! -d "$HOME/.local/share/nuclei-templates" ] || \
+             [ -z "$(ls -A $HOME/.local/share/nuclei-templates 2>/dev/null)" ]; then
+            echo "No templates found, downloading now..."
+            nuclei -update-templates -silent
+          else
+            echo "Templates found, using cache"
+            ls $HOME/.local/share/nuclei-templates | head -5
+          fi
+
       - name: Prepare input
         run: |
           if [ -f live_hosts.txt ] && [ -s live_hosts.txt ]; then
