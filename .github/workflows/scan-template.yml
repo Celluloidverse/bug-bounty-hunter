@@ -54,6 +54,15 @@ jobs:
         run: |
           go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
           go install github.com/projectdiscovery/katana/cmd/katana@latest
+      - name: Install nuclei if missing
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          if ! command -v nuclei &> /dev/null; then
+            echo "nuclei not found, installing..."
+            go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+          else
+            echo "nuclei found: $(nuclei -version 2>&1 | head -1)"
+          fi
 
       - name: Cache nuclei templates
         uses: actions/cache@v4
