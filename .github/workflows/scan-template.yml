@@ -112,7 +112,16 @@ jobs:
       - name: Run nuclei
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
-          TEMPLATE_DIR="$HOME/.local/share/nuclei-templates"
+          
+          # Find where templates actually are
+          if [ -d "$HOME/.local/share/nuclei-templates/http" ]; then
+            TEMPLATE_DIR="$HOME/.local/share/nuclei-templates"
+          elif [ -d "nuclei-templates/http" ]; then
+            TEMPLATE_DIR="nuclei-templates"
+          else
+            TEMPLATE_DIR="$HOME/.local/share/nuclei-templates"
+          fi
+          echo "Using templates from: $TEMPLATE_DIR"
 
           if [ "${{ inputs.nuclei_input }}" = "urls" ] && [ -f urls.txt ]; then
             INPUT_FILE="urls.txt"
@@ -138,7 +147,6 @@ jobs:
             -silent -retries 1 -timeout 8 \
             -bulk-size 100 -concurrency 100 \
             -o results.txt || true
-
       - name: Check for results
         id: check
         run: |
