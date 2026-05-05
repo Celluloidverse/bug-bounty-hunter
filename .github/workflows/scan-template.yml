@@ -1,4 +1,3 @@
-# scan-template.yml
 name: Scan Template Engine
 
 on:
@@ -39,7 +38,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # MUST be before cache step that uses it
       - name: Get week number
         id: date
         run: echo "week=$(date +'%Y-%U')" >> $GITHUB_OUTPUT
