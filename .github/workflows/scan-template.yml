@@ -108,7 +108,7 @@ jobs:
 
           TAGS_FLAG=""
           if [ -n "${{ inputs.tags }}" ]; then
-            TAGS_FLAG="-tags ${{ inputs.tags }}"
+            TAGS_FLAG="-itags ${{ inputs.tags }}"
           fi
 
           # Combine main templates and custom templates into one -t flag
