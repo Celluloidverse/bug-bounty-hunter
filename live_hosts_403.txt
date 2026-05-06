@@ -6,4 +6,4 @@ https://converse-web-static.wolt.com
 https://developer-portal-static-assets.wolt.com
 https://prod-videos.wolt.com
 https://static.wolt.com
-https://webfonts.wolt.com
+https://wolt-com-static-assets.wolt.com

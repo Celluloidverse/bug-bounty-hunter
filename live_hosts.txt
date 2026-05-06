@@ -1,5 +1,4 @@
 http://kesasyomarit.wolt.com
-http://regatta.wolt.com
 https://atlantis-steiger.prod.fg.wolt.com
 https://atlantis-test.prod.fg.wolt.com
 https://blog.wolt.com
@@ -22,10 +21,12 @@ https://links.wolt.com
 https://looker.wolt.com
 https://merchant.wolt.com
 https://ns1.ns1.util.wolt.com
+https://ns1.util.wolt.com
 https://ops.wolt.com
 https://people.wolt.com
-https://press.wolt.com
 https://prod-videos.wolt.com
 https://static.wolt.com
+https://status.wolt.com
 https://util.wolt.com
-https://webfonts.wolt.com
+https://wolt-com-static-assets.wolt.com
+https://www.wolt.com
