@@ -14,6 +14,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Fetch domains from domains branch
+        run: |
+          git fetch origin domains 2>/dev/null || true
+          git checkout origin/domains -- domains.txt 2>/dev/null || true
+          if [ ! -s domains.txt ]; then
+            echo "No domains branch found, using main branch domains.txt"
+          fi
+          echo "Domains loaded: $(wc -l < domains.txt)"
+
       - name: Filter and split domains
         id: split
         run: |
