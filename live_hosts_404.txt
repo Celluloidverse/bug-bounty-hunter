@@ -1,1 +1,4 @@
-https://auth.vinci.com
+https://2c2p-checkout.antom.com
+https://checkout.antom.com
+https://js.antom.com
+https://simpler.antom.com
