@@ -3,7 +3,6 @@ on:
   schedule:
     - cron: '30 0 * * *'
   workflow_dispatch:
-
 jobs:
   # ─── 1. TAKEOVER ───────────────────────────────────────────────
   # Uses 404 hosts only — subdomains returning 404 are takeover candidates
@@ -20,7 +19,6 @@ jobs:
 
   # ─── 2. MAIN DAILY SCAN ────────────────────────────────────────
   # CVE + CORS + Admin Panels + Secrets all in one nuclei run
-  # All use live_hosts so combining is clean and logical
   daily_main:
     uses: ./.github/workflows/scan-template.yml
     with:
