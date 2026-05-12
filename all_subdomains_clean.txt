@@ -127,7 +127,6 @@ advertising.post.ch
 advertising1.post.ch
 advertising2.post.ch
 advertising3.post.ch
-advertising4.post.ch
 ae0-cr1.a12.sth.ownit.se
 ae0-cr1.a2.mlm.ownit.se
 ae0-dr1.a1.gbg.ownit.se
@@ -391,7 +390,6 @@ appsint.post.ch
 appstest.post.ch
 aprol-hpf-int.post.ch
 aprol.apis-dev.post.ch
-aprol.apis.post.ch
 archive.design-system.post.ch
 aroundus.post.ch
 arp01.ownit.se
@@ -1442,7 +1440,6 @@ erphr.apis-test.post.ch
 erphr.apis.post.ch
 erppa.apis-dev.post.ch
 erppa.apis-test.post.ch
-erppa.apis.post.ch
 erppn.apis-dev.post.ch
 erppn.apis-int.post.ch
 erppn.apis-test.post.ch
@@ -2170,7 +2167,6 @@ kg2.post.ch
 kgint.post.ch
 kgint1.post.ch
 kgint2.post.ch
-kiatikm.apis.post.ch
 kibana01.ownit.se
 kim01.ownit.se
 klp-help.post.ch
@@ -2796,9 +2792,7 @@ partner.onedoc.ch
 partner1.onedoc.ch
 partners-staging.blablacardaily.com
 pase-int.post.ch
-pase.apis.post.ch
 pase.post.ch
-path.apis.post.ch
 patient.dh-int.post.ch
 patient.dh.post.ch
 patient.sanela.dh-dev.post.ch
@@ -4187,6 +4181,7 @@ www.rasint.post.ch
 www.rasns01.post.ch
 www.rasns02.post.ch
 www.rasns03.post.ch
+www.rds.vimla.se
 www.remote-support-ng.post.ch
 www.service.post.ch
 www.service.qa.atg.se
@@ -4197,7 +4192,7 @@ www.shop.post.ch
 www.siilo.com
 www.sk.blablacar.com
 www.sorry.post.ch
-www.sp.ownit.se
+www.stage.vimla.se
 www.stayfit.post.ch
 www.t.e.vimla.se
 www.t.email.atg.se
